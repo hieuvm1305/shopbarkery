@@ -75,7 +75,7 @@ function ProductModal({ open, hide, productItem }) {
     return () => {};
   }, [dispatch]);
   const [temp, settemp] = useState([]);
-
+  
   useEffect(() => {
     if (productItem) {
       setproduct({
@@ -84,7 +84,10 @@ function ProductModal({ open, hide, productItem }) {
         description: productItem.description,
         unitPrice: productItem.unitPrice,
         unit: productItem.unit,
+        idUnit: productItem.idUnit,
+        idTypes: productItem.idTypes,
         images: productItem.images.split(";"),
+        types: productItem.idTypes.split(";"),
       });
     }
     return () => {};
@@ -101,7 +104,6 @@ function ProductModal({ open, hide, productItem }) {
       ...product,
       types: typeof value === "string" ? value.split(";") : value,
     });
-    console.log(product.types);
   };
   const handleUploadFile = (e) => {
     const filesPreview = [];
@@ -124,7 +126,7 @@ function ProductModal({ open, hide, productItem }) {
         toast.error("Upload ảnh lỗi!");
       };
     }
-    settemp([...filesPreview]);
+    settemp([...temp, ...filesPreview]);
     setproduct({ ...product, fileBase64ObjArr: fileBase64ObjArr });
   };
   const changeAmountIngredient = (e) => {
@@ -181,6 +183,7 @@ function ProductModal({ open, hide, productItem }) {
                 <input
                   type="text"
                   className="w-full border rounded py-2 px-3 leading-tight"
+                  value={product.name}
                   onChange={(e) => {
                     setproduct({ ...product, name: e.target.value });
                   }}
@@ -191,6 +194,7 @@ function ProductModal({ open, hide, productItem }) {
                 <input
                   type="text"
                   className="w-full border rounded py-2 px-3 leading-tight"
+                  value={product.description}
                   onChange={(e) => {
                     setproduct({ ...product, description: e.target.value });
                   }}
@@ -200,6 +204,7 @@ function ProductModal({ open, hide, productItem }) {
                 <label>Đơn vị tính</label>
                 <select
                   className="w-full border rounded h-10 py-2 px-3 "
+                  defaultValue={product.idUnit}
                   onChange={(e) => {
                     setproduct({ ...product, idUnit: e.target.value });
                   }}
@@ -222,6 +227,7 @@ function ProductModal({ open, hide, productItem }) {
                   onChange={(e) => {
                     setproduct({ ...product, unitPrice: e.target.value });
                   }}
+                  value={product.unitPrice}
                 />
               </div>
             </div>
@@ -305,7 +311,22 @@ function ProductModal({ open, hide, productItem }) {
                 </div>
               </div>
             </div>
-            <div></div>
+            <div>
+              {product.ingredientObjArr &&
+                product.ingredientObjArr.map((item, index) => (
+                  <div className="grid grid-cols-3" key={index}>
+                    <div>
+                      <span>{item.idIngredient}</span>
+                    </div>
+                    <div>
+                      <span>{item.amount}</span>
+                    </div>
+                    <div>
+                      <button>Xóa</button>
+                    </div>
+                  </div>
+                ))}
+            </div>
             <div>
               <button
                 className="border rounded px-2 py-2 bg-green-500 font-bold mx-2 text-white"

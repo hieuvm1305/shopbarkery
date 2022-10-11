@@ -38,9 +38,11 @@ function IngredientModal(props) {
         unit: props.editItem.unit,
       });
     }
-    return () => {
-    };
+
+    return () => {};
   }, [props.editItem]);
+
+  console.log(ingredientItem);
   const style = {
     position: "absolute",
     top: "50%",
@@ -66,8 +68,8 @@ function IngredientModal(props) {
     props.hide();
   };
   const updateItem = () => {
-    let data = {...ingredientItem};
-    console.log(data)
+    let data = { ...ingredientItem };
+    console.log(data);
     dispatch(updateIngredientItem(data));
     setingredientItem({
       id: "",
@@ -142,13 +144,16 @@ function IngredientModal(props) {
                     idUnit: e.target.value,
                   });
                 }}
-                defaultValue={ingredientItem.unit}
-              > <option></option>
-                {unitList && unitList.map((item, index) => (
-                  <option key={index} value={item.id}>
-                    {item.name}
-                  </option>
-                ))}
+                defaultValue={ingredientItem.idUnit}
+              >
+                {" "}
+                <option></option>
+                {unitList &&
+                  unitList.map((item, index) => (
+                    <option key={index} value={item.id}>
+                      {item.name}
+                    </option>
+                  ))}
               </select>
             </div>
             <div className="mb-2">
