@@ -8,9 +8,16 @@ const initialState = {
 };
 
 export const getUnitListTemp = createAsyncThunk("unit/getUnit", async () => {
-  const unitResult = await axios.get(`${ApiLocal}/unit`);
-  return unitResult.data;
+  
   //get unit list and change state.unitList
+  try {
+    const unitResult = await axios.get(`${ApiLocal}/unit`);
+    if(unitResult.status === 200){
+      return unitResult.data;
+    }
+  } catch (error) {
+    toast("Lấy danh sách unit thất bại");
+  }
 });
 
 //Delete Unit

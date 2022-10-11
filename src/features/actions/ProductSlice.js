@@ -14,7 +14,7 @@ export const getProductList = createAsyncThunk("product/get", async () => {
       return response.data;
     }
   } catch (error) {
-    console.error(error);
+    toast("có lỗi xảy ra")
   }
 });
 //delete
@@ -31,6 +31,19 @@ export const deleteProductItem = createAsyncThunk(
     }
   }
 );
+//create
+export const createProductItem = createAsyncThunk("product/create",
+async(params) => {
+  try {
+    const response = await axios.post(`${ApiLocal}/product`, params);
+    if (response.status === 200) {
+      toast.warn("Bạn đã xóa thành công");
+    }
+  } catch (e) {
+    toast("có lỗi xảy ra");
+  }
+})
+
 const productSlice = createSlice({
   name: "product",
   initialState,
@@ -40,6 +53,9 @@ const productSlice = createSlice({
       state.productList = actions.payload;
     });
     builder.addCase(deleteProductItem.fulfilled, (state) => {
+      state.reload = !state.reload;
+    } );
+    builder.addCase(createProductItem.fulfilled, (state) => {
       state.reload = !state.reload;
     } )
   },

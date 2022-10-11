@@ -143,8 +143,8 @@ function IngredientModal(props) {
                   });
                 }}
                 defaultValue={ingredientItem.unit}
-              >
-                {unitList.map((item, index) => (
+              > <option></option>
+                {unitList && unitList.map((item, index) => (
                   <option key={index} value={item.id}>
                     {item.name}
                   </option>

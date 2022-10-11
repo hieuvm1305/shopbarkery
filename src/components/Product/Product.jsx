@@ -41,6 +41,7 @@ function Product() {
     setproductItem(data);
   };
   const renderProductList = () => {
+    if(productList){
     let res = productList.map((item, index) => (
       <div className="border rounded" key={index}>
         <img
@@ -74,6 +75,9 @@ function Product() {
       </div>
     ));
     return res;
+  }else{
+    return (<div>Not found</div>)
+  }
   };
   return (
     <div className="m-2">

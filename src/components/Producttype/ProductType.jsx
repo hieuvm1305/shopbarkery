@@ -40,6 +40,7 @@ function ProductType() {
     }
   };
   const renderProductList = () => {
+    if(productTypeList){
     const res = productTypeList.map((item, index) => (
       <tr key={index}>
         <td className="border text-center">{index + 1}</td>
@@ -62,6 +63,7 @@ function ProductType() {
       </tr>
     ));
     return res;
+    } else return (<div>Not found</div>)
   };
   return (
     <div className="border mx-2 my-2">

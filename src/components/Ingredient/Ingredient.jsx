@@ -41,43 +41,45 @@ function Ingredient() {
   };
 
   const renderIngredientList = () => {
-    let res = ingredientList.map((item, index) => (
-      <div className="border grid grid-cols-10 mx-2" key={index}>
-        <div className="col-span-1 text-center border">
-          <p className="p-2">{index + 1}</p>
+    if (ingredientList) {
+      let res = ingredientList.map((item, index) => (
+        <div className="border grid grid-cols-10 mx-2" key={index}>
+          <div className="col-span-1 text-center border">
+            <p className="p-2">{index + 1}</p>
+          </div>
+          <div className="col-span-1 text-center border">
+            <p className="p-2">{item.name}</p>
+          </div>
+          <div className="col-span-1 text-center border">
+            <p className="p-2">{item.unit}</p>
+          </div>
+          <div className="col-span-2 text-center border">
+            <p className="p-2">{item.description}</p>
+          </div>
+          <div className="col-span-2 text-center border">
+            <p className="p-2">{item.quantity}</p>
+          </div>
+          <div className="col-span-2 text-center border">
+            <p className="p-2">{item.warningThreshold}</p>
+          </div>
+          <div className="col-span-1 text-center border">
+            <button
+              className="border px-2 py-2 rounded bg-teal-700 text-white font-bold m-1"
+              onClick={() => updateIngredient(item)}
+            >
+              Sửa
+            </button>
+            <button
+              className="border px-2 py-2 rounded bg-red-500 text-white font-bold m-1"
+              onClick={() => deleteIngredient(item.id)}
+            >
+              Xóa
+            </button>
+          </div>
         </div>
-        <div className="col-span-1 text-center border">
-          <p className="p-2">{item.name}</p>
-        </div>
-        <div className="col-span-1 text-center border">
-          <p className="p-2">{item.unit}</p>
-        </div>
-        <div className="col-span-2 text-center border">
-          <p className="p-2">{item.description}</p>
-        </div>
-        <div className="col-span-2 text-center border">
-          <p className="p-2">{item.quantity}</p>
-        </div>
-        <div className="col-span-2 text-center border">
-          <p className="p-2">{item.warningThreshold}</p>
-        </div>
-        <div className="col-span-1 text-center border">
-          <button
-            className="border px-2 py-2 rounded bg-teal-700 text-white font-bold m-1"
-            onClick={() => updateIngredient(item)}
-          >
-            Sửa
-          </button>
-          <button
-            className="border px-2 py-2 rounded bg-red-500 text-white font-bold m-1"
-            onClick={() => deleteIngredient(item.id)}
-          >
-            Xóa
-          </button>
-        </div>
-      </div>
-    ));
-    return res;
+      ));
+      return res;
+    } else return (<div>Not found</div>);
   };
 
   return (

@@ -40,6 +40,7 @@ function Unit() {
   // viết component table để render tất cả các bảng
   //wait...
   const renderUnitList = () => {
+    if(unitList){
     let res = unitList.map((item, index) => (
       <div className="border grid grid-cols-7 mx-2" key={index}>
         <div className="col-span-1 text-center border">
@@ -68,6 +69,9 @@ function Unit() {
       </div>
     ));
     return res;
+    } else {
+      return (<div><h3>Error</h3></div>)
+    }
   };
 
   return (
