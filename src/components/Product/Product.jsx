@@ -45,7 +45,7 @@ function Product() {
     let res = productList.map((item, index) => (
       <div className="border rounded" key={index}>
         <img
-          src={`http://127.0.0.1:3001/public/img/${item.images.split(";")[0]}`}
+          src={item.images && `${process.env.REACT_APP_IMAGE_URL}${item.images.split(";")[0]}`}
           alt="/"
           className="rounded"
         ></img>

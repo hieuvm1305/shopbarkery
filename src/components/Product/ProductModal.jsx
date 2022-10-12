@@ -20,6 +20,7 @@ import MenuItem from "@mui/material/MenuItem";
 import FormControl from "@mui/material/FormControl";
 import Select from "@mui/material/Select";
 import { createProductItem } from "../../features/actions/ProductSlice";
+import { AiOutlineDelete } from "react-icons/ai";
 function ProductModal({ open, hide, productItem }) {
   const style = {
     position: "fixed",
@@ -68,14 +69,14 @@ function ProductModal({ open, hide, productItem }) {
   const unitList = useSelector(selectUnit);
   const ingredientList = useSelector(selectIngredient);
   const productTypeList = useSelector(selectProductTypeList);
+  const [tempPreview, settempPreview] = useState([]);
   useEffect(() => {
     dispatch(getUnitListTemp());
     dispatch(getIngredientList());
     dispatch(getProductTypeList());
     return () => {};
   }, [dispatch]);
-  const [temp, settemp] = useState([]);
-  
+
   useEffect(() => {
     if (productItem) {
       setproduct({
@@ -89,13 +90,27 @@ function ProductModal({ open, hide, productItem }) {
         images: productItem.images.split(";"),
         types: productItem.idTypes.split(";"),
       });
+      settempPreview(productItem.images.split(";"));
     }
     return () => {};
   }, [productItem]);
+  //Close modal
   const closeModal = () => {
     hide();
+    setproduct({
+      name: "",
+      description: "",
+      idUnit: "",
+      unitPrice: "",
+      types: [],
+      ingredientObjArr: [],
+      fileBase64ObjArr: [],
+    });
+    settempPreview([]);
+    setamountIngre("");
+    setingreName("");
   };
-  const [amountIngre, setamountIngre] = useState(0);
+  const [amountIngre, setamountIngre] = useState("");
   const handleChangeTypes = (e) => {
     const {
       target: { value },
@@ -107,7 +122,7 @@ function ProductModal({ open, hide, productItem }) {
   };
   const handleUploadFile = (e) => {
     const filesPreview = [];
-    const fileBase64ObjArr = [];
+    const fileBase64ObjAr = [];
     for (let file of e.target.files) {
       const name = v4();
       filesPreview.push({
@@ -117,7 +132,7 @@ function ProductModal({ open, hide, productItem }) {
       const reader = new FileReader();
       reader.readAsDataURL(file);
       reader.onload = function () {
-        fileBase64ObjArr.push({
+        fileBase64ObjAr.push({
           base64: reader.result,
           name,
         });
@@ -126,8 +141,14 @@ function ProductModal({ open, hide, productItem }) {
         toast.error("Upload ảnh lỗi!");
       };
     }
-    settemp([...temp, ...filesPreview]);
-    setproduct({ ...product, fileBase64ObjArr: fileBase64ObjArr });
+    settempPreview([...tempPreview, ...filesPreview]);
+
+    setproduct({ ...product, fileBase64ObjArr: fileBase64ObjAr });
+  };
+  const delteteImagePreview = (data) => {
+    let temp = [...tempPreview];
+    temp = temp.filter((item) => item.name !== data);
+    settempPreview([...temp]);
   };
   const changeAmountIngredient = (e) => {
     setamountIngre(e.target.value);
@@ -139,9 +160,13 @@ function ProductModal({ open, hide, productItem }) {
   };
   const addNewIngre = () => {
     if (ingreName && amountIngre) {
+      let ingreItem = ingredientList.find(
+        (item) => item.id === parseInt(ingreName)
+      );
       let data = {
         idIngredient: ingreName,
         amount: amountIngre,
+        name: ingreItem.name + "-" + ingreItem.unit,
         isCreated: true,
         isDeleted: false,
         isModified: false,
@@ -150,8 +175,8 @@ function ProductModal({ open, hide, productItem }) {
         ...product,
         ingredientObjArr: [...product.ingredientObjArr, data],
       });
-      setamountIngre("");
       setingreName("");
+      setamountIngre("");
     }
   };
 
@@ -168,7 +193,7 @@ function ProductModal({ open, hide, productItem }) {
         ingredientObjArr: [],
         fileBase64ObjArr: [],
       });
-      settemp([]);
+      settempPreview([]);
     }
   };
   return (
@@ -264,13 +289,43 @@ function ProductModal({ open, hide, productItem }) {
                 multiple
                 onChange={handleUploadFile}
               ></input>
-              <div className="grid grid-cols-4">
-                {temp &&
-                  temp.map((item, index) => (
-                    <div key={index}>
-                      <img src={item["url"]} alt="" className="max-h-40" />
-                    </div>
-                  ))}
+
+              <div>
+                {productItem ? (
+                  <div className="grid grid-cols-4">
+                    {tempPreview &&
+                      tempPreview.map((item, index) => (
+                        <div key={index} className="relative m-2">
+                          <button
+                            className="absolute right-0 bg-red-600 rounded px-1 py-1"
+                            onClick={() => delteteImagePreview(item.name)}
+                          >
+                            <AiOutlineDelete />
+                          </button>
+                          <img
+                            src={`${process.env.REACT_APP_IMAGE_URL}${item}`}
+                            alt=""
+                            className="max-h-40"
+                          />
+                        </div>
+                      ))}
+                  </div>
+                ) : (
+                  <div className="grid grid-cols-4">
+                    {tempPreview &&
+                      tempPreview.map((item, index) => (
+                        <div key={index} className="relative m-2">
+                          <button
+                            className="absolute right-0 bg-red-600 rounded px-1 py-1"
+                            onClick={() => delteteImagePreview(item.name)}
+                          >
+                            <AiOutlineDelete />
+                          </button>
+                          <img src={item["url"]} alt="" className="max-h-40" />
+                        </div>
+                      ))}
+                  </div>
+                )}
               </div>
             </div>
             <div className="border-b">
@@ -282,12 +337,13 @@ function ProductModal({ open, hide, productItem }) {
                 <select
                   className="w-full border rounded py-2 px-3 h-10 leading-tight "
                   onChange={handleChangeIngre}
+                  value={ingreName}
                 >
                   <option></option>
                   {ingredientList &&
                     ingredientList.map((item, index) => (
                       <option key={index} value={item.id}>
-                        {item.name}
+                        {item.name}-{item.unit}
                       </option>
                     ))}
                 </select>
@@ -298,6 +354,7 @@ function ProductModal({ open, hide, productItem }) {
                   type="text"
                   className="w-full border rounded py-2 px-3 h-10 leading-tight"
                   onChange={changeAmountIngredient}
+                  value={amountIngre}
                 />
               </div>
               <div className="relative">
@@ -314,15 +371,17 @@ function ProductModal({ open, hide, productItem }) {
             <div>
               {product.ingredientObjArr &&
                 product.ingredientObjArr.map((item, index) => (
-                  <div className="grid grid-cols-3" key={index}>
-                    <div>
-                      <span>{item.idIngredient}</span>
+                  <div className="grid grid-cols-3 gap-3 my-1" key={index}>
+                    <div className="w-full border rounded">
+                      <p className="m-2 leading-tight">{item.name}</p>
+                    </div>
+                    <div className="w-full border rounded">
+                      <p className="m-2 leading-tight">{item.amount}</p>
                     </div>
                     <div>
-                      <span>{item.amount}</span>
-                    </div>
-                    <div>
-                      <button>Xóa</button>
+                      <button className="border px-2 py-2 rounded bg-red-400">
+                        <AiOutlineDelete />
+                      </button>
                     </div>
                   </div>
                 ))}
